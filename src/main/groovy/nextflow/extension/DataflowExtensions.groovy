@@ -1283,8 +1283,8 @@ class DataflowExtensions {
         def target = new DataflowQueue()
         def count = new AtomicInteger( others.size()+1 )
         def handlers = [
-                onNext: { target << it },
-                onComplete: { if(count.decrementAndGet()==0) { target << Channel.STOP } }
+                onNext: { println ">> next: $it"; target << it },
+                onComplete: { println ">> complete: $count";  if(count.decrementAndGet()==0) { target << Channel.STOP } }
         ]
 
         DataflowHelper.subscribeImpl(source, handlers)

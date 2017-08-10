@@ -181,9 +181,12 @@ class DataflowHelper {
 
             @Override
             public void afterStop(final DataflowProcessor processor) {
+                println ">> after stop source [${source.hashCode()}]: $source"
                 if( !events.onComplete || error ) return
                 try {
+                    println ">> invoking oncomplete source [${source.hashCode()}]: $source"
                     events.onComplete.call(processor)
+                    println ">> after oncomplete source [${source.hashCode()}]: $source"
                 }
                 catch( Exception e ) {
                     DataflowExtensions.log.error("@unknown", e)
@@ -211,11 +214,14 @@ class DataflowHelper {
         parameters.put("outputs", [])
         parameters.put('listeners', [listener])
 
+        println "**** create op [${source.hashCode()}]: $source -- $parameters -- stopOnFirst: $stopOnFirst"
         newOperator(parameters) {
             if( events.onNext ) {
+                println "++ onNextflow source [${source.hashCode()}]: $source -- item: $it"
                 events.onNext.call(it)
             }
             if( stopOnFirst ) {
+                println "++ stopOnFirst source [${source.hashCode()}]"
                 ((DataflowProcessor) getDelegate()).terminate()
             }
         }
